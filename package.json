@@ -1,0 +1,21 @@
+{
+  "name": "dsh-opencode-go-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenCode Go 余额悬浮窗（web UI 插件）：月度/滚动/每周额度 + 用量，可拖动、可调整大小",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-layout"
+      ],
+      "platform": "web"
+    }
+  }
+}
