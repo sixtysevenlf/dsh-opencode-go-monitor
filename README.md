@@ -1,11 +1,14 @@
 # dsh-opencode-go-monitor
 
-DSH（DeepSeek Harness）Web UI 悬浮面板插件：实时显示 **OpenCode Go**（opencode 官方订阅）的额度余额与（可选的）本地用量。
+DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显示 DeepSeek 与 **OpenCode Go** 的额度余额（标签切换带滑动+淡入动画）。
 
-- **月度 / 滚动 / 每周** 三档额度：剩余 %（绿≥50% / 橙≥25% / 红<25%）+ 进度条 + 已用 % + 重置时间
-- 今日 / 累计用量（tokens、费用、会话数）—— **可选项**，未安装 opencode 时自动隐藏
+- **双标签页**：DeepSeek 余额 / OpenCode Go 余额，点击切换，带方向滑动 + 淡入动画
+- OpenCode Go 页：**月度 / 滚动 / 每周** 三档额度：剩余 %（绿≥50% / 橙≥25% / 红<25%）+ 进度条 + 已用 % + 重置时间；下方为可选用量（今日/累计）
+- DeepSeek 页：余额、预计剩余 tokens（按 ¥4/百万估算）、当前模型
 - 可**拖动**（位置记忆）、右下角**调整大小**（尺寸记忆）
-- 余额每 60s 轮询官方接口
+- 轮询：DeepSeek 每 30s、OpenCode Go 每 60s、用量每 5s
+
+> 本插件已合并原「余额悬浮窗」（dsh-balance-window）的面板，部署时请将旧插件注册改为 `disabled`（见安装步骤），避免两个面板重叠。
 
 风格与 DSH 自带「余额悬浮窗」（dsh-balance-window，DeepSeek 余额）一致。
 
@@ -23,7 +26,8 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：实时显示 **OpenCode Go*
 | 依赖 | 说明 |
 | --- | --- |
 | DeepSeek Harness（web 或桌面端） | 插件运行在 DSH 内 |
-| OpenCode Go 订阅 + API key | 在 DSH **设置 → 凭据** 中添加 `OPENCODE_GO_API_KEY`（在 [opencode.ai/auth](https://opencode.ai/auth) 获取） |
+| DeepSeek API key | DSH **设置 → 凭据** 添加 `DEEPSEEK_API_KEY`（DeepSeek 标签页用） |
+| OpenCode Go 订阅 + API key | DSH **设置 → 凭据** 添加 `OPENCODE_GO_API_KEY`（在 [opencode.ai/auth](https://opencode.ai/auth) 获取） |
 | ~~opencode CLI~~ | **不再需要**（仅"用量"统计可选依赖 opencode 的本地数据库） |
 
 ## 安装
@@ -45,7 +49,14 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：实时显示 **OpenCode Go*
 
 3. `cordis.patch.yml` 修改会**热加载**，无需重启；刷新浏览器页面（Ctrl+Shift+R）即可看到面板
 
-4. 配置凭据：DSH **设置 → 凭据** → 添加 `OPENCODE_GO_API_KEY`（值为 opencode.ai/auth 里复制的 key）
+4. 配置凭据：DSH **设置 → 凭据** → 添加 `DEEPSEEK_API_KEY` 与 `OPENCODE_GO_API_KEY`
+
+5. 若旧版「余额悬浮窗」（`dsh-balance-window`）还注册着，把它的 `insert:` 块替换为禁用条目：
+
+   ```yaml
+   - id: balance-window
+     disabled: true
+   ```
 
 ### 方式二：super-injector（如果装有）
 
