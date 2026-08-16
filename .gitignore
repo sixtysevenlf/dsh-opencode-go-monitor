@@ -1,0 +1,26 @@
+# 凭据 / 密钥：绝不提交
+*.credentials
+credentials.yaml
+.env
+.env.*
+*.pem
+*.key
+
+# node_modules / 依赖
+node_modules/
+
+# 构建与打包产物
+*.tgz
+*.tsbuildinfo
+dist/
+build/
+
+# 临时调试脚本 / 探针（提交前清除）
+probe*.mjs
+probe-*.mjs
+*_slice.mjs
+
+# 日志与本地数据
+*.log
+.DS_Store
+Thumbs.db

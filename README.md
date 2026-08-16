@@ -32,27 +32,35 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显�
 
 ## 隐私说明（重要）
 
-- **不依赖本地 opencode**：余额查询**不读取** opencode 的配置文件（`auth.json` 等）
-- API key 来源（按优先级）：
-  1. **DSH 凭据系统**：`OPENCODE_GO_API_KEY`（设置 → 凭据，存在 `$DSH_HOME/.credentials.yaml` 本地文件）
-  2. 环境变量 `OGM_API_KEY`
-- key 只在进程内存中使用，仅用于调用官方余额接口 `https://opencode.ai/zen/go/v1/usage`，**不落盘、不写日志、不发给任何第三方**
-- 仓库内不含任何密钥 —— **每个部署者看到的是自己的余额**
+- **不依赖本地 opencode**：不读取任何 opencode 配置文件；用量/金额全部来自 **DeepSeek 官网平台**
+- API key / token 来源（按优先级）：
+  1. **DSH 凭据系统**：写在 `$DSH_HOME/.credentials.yaml` 本地文件（设置 → 凭据）
+  2. 环境变量兜底
+- key/token 只在进程内存中使用，用于调用官方接口，**不落盘、不写日志、不发给任何第三方**
+- 仓库内不含任何密钥 —— **每个部署者在自己的机器上配置自己的凭据，看到的是自己的余额与官网用量**
 
 ## 前置条件
 
 | 依赖 | 说明 |
 | --- | --- |
 | DeepSeek Harness（web 或桌面端） | 插件运行在 DSH 内 |
-| DeepSeek API key | DSH **设置 → 凭据** 添加 `DEEPSEEK_API_KEY`（DeepSeek 标签页用） |
+| DeepSeek API key | DSH **设置 → 凭据** 添加 `DEEPSEEK_API_KEY`（DeepSeek 余额标签页用） |
 | OpenCode Go 订阅 + API key | DSH **设置 → 凭据** 添加 `OPENCODE_GO_API_KEY`（在 [opencode.ai/auth](https://opencode.ai/auth) 获取） |
-| ~~opencode CLI~~ | **不再需要**（仅"用量"统计可选依赖 opencode 的本地数据库） |
+| **DeepSeek 官网登录会话 token** | DSH **设置 → 凭据** 添加 `DEEPSEEK_PLATFORM_TOKEN`（**查看自己官网用量/金额/小时粒度的必需项**，获取方法见下） |
 
 ## 安装
 
+### 从 GitHub 获取
+
+```bash
+git clone https://github.com/<owner>/dsh-save-balance-monitor.git dsh-opencode-go-monitor
+```
+
+clone 出来的 `dsh-opencode-go-monitor/` 就是插件文件夹（含 `package.json` 和 `lib/`），按下方方式一或方式二安装即可。所有密钥都不在仓库里，需要**你自己配置**（见上文「前置条件」与「获取 DEEPSEEK_PLATFORM_TOKEN」）。
+
 ### 方式一：标准流程（推荐，热加载）
 
-1. 把本文件夹（含 `package.json` 和 `lib/`）整个复制到 `$DSH_HOME/profiles/node_modules/dsh-opencode-go-monitor/`
+1. 把插件文件夹（含 `package.json` 和 `lib/`）整个复制到 `$DSH_HOME/profiles/node_modules/dsh-opencode-go-monitor/`
 
    `$DSH_HOME` 默认位置：Windows `~\.dsh`；macOS / Linux `~/.dsh`（可用 `echo $DSH_HOME` 确认）
 
@@ -67,7 +75,7 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显�
 
 3. `cordis.patch.yml` 修改会**热加载**，无需重启；刷新浏览器页面（Ctrl+Shift+R）即可看到面板
 
-4. 配置凭据：DSH **设置 → 凭据** → 添加 `DEEPSEEK_API_KEY` 与 `OPENCODE_GO_API_KEY`
+4. 配置凭据：DSH **设置 → 凭据** → 添加 `DEEPSEEK_API_KEY`、`OPENCODE_GO_API_KEY`，以及 `DEEPSEEK_PLATFORM_TOKEN`（官网用量必需，见下）
 
 5. 若旧版「余额悬浮窗」（`dsh-balance-window`）还注册着，把它的 `insert:` 块替换为禁用条目：
 
@@ -75,6 +83,20 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显�
    - id: balance-window
      disabled: true
    ```
+
+### 获取 DEEPSEEK_PLATFORM_TOKEN（查看自己官网用量/金额）
+
+DeepSeek 官网控制台的用量/金额端点需要登录会话 token（API key 认证不了）。**每个用户都要用自己的**：
+
+1. 用任意浏览器（Chrome / Edge / 360 极速「极速模式」）登录 **https://platform.deepseek.com**
+2. 打开开发者工具：**F12**（或右键 → 检查）
+3. 切到 **Application / 应用程序 → Local Storage / 本地存储 → `https://platform.deepseek.com`**
+4. 找到键 **`userToken`**，复制它的值（很长一串，`eyJ...` 开头）
+   - 若找不到：切到 **Console / 控制台**，输入 `localStorage.getItem('userToken')` 回车，复制引号里的内容
+5. 把这段值填到 **DSH 设置 → 凭据 → `DEEPSEEK_PLATFORM_TOKEN`**（或写进 `~/.dsh/.credentials.yaml`：`DEEPSEEK_PLATFORM_TOKEN: <值>`）
+6. 面板 DeepSeek 页 **30 秒内**出现「官网当月」行（token 总量 / 花费 / 请求次数 / 日均）即成功
+
+> ⚠ token 与你的官网登录会话绑定：**退出登录、清理浏览器缓存后失效**，重新按上面取一次即可。token 只存在你自己机器的凭据文件里，绝不提交进代码/仓库。
 
 ### 方式二：super-injector（如果装有）
 
@@ -86,10 +108,8 @@ dev_install_package dir=<本文件夹绝对路径>
 
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
-| `OGM_API_KEY` | — | 备用 key（无 DSH 凭据时使用） |
-| `OGM_DATA_DIR` | `~/.local/share/opencode` | opencode 数据目录（仅用量统计用） |
-| `OGM_DB` | `<数据目录>/opencode.db` | 用量数据库路径（仅用量统计用） |
-| `OGM_PROVIDER` | `opencode-go` | 用量统计过滤的 provider 名 |
+| `OGM_API_KEY` | — | OpenCode Go 备用 key（无 DSH 凭据时使用） |
+| `OGM_PLATFORM_TOKEN` | — | DeepSeek 官网 userToken 备用（无 DSH 凭据时使用） |
 | `OGM_BASE` | `https://opencode.ai/zen/go/v1/usage` | 余额接口地址 |
 
 ## 排错
@@ -98,9 +118,11 @@ dev_install_package dir=<本文件夹绝对路径>
 | --- | --- |
 | 状态行「余额失败：未配置 OPENCODE_GO_API_KEY 凭据」 | DSH 设置 → 凭据 添加 `OPENCODE_GO_API_KEY`，或设置环境变量 `OGM_API_KEY` |
 | 状态行「余额失败：HTTP 401」 | key 无效/过期，到 [opencode.ai/auth](https://opencode.ai/auth) 重新生成 |
-| 状态行「用量不可用」 | 未安装 opencode 或数据库缺失 —— 正常现象，余额不受影响 |
+| 面板 DeepSeek 页「官网用量: 未配置 DEEPSEEK_PLATFORM_TOKEN 凭据」 | 按上文「获取 DEEPSEEK_PLATFORM_TOKEN」配置 |
+| 面板「官网用量: Platform token 无效或已过期」 | token 失效，重新从浏览器 localStorage 取新的 |
+| DeepSeek 余额显示为负 | 账户余额已用超，注意在 [platform.deepseek.com](https://platform.deepseek.com) 充值 |
 | 面板完全不显示 | 确认 `cordis.patch.yml` 注册行格式、`profiles/node_modules/dsh-opencode-go-monitor` 路径；浏览器硬刷新（Ctrl+Shift+R）；F12 控制台看红色报错 |
-| 两个面板重叠 | 直接拖动分开即可（位置记忆） |
+| 两个面板重叠 | 直接把其中一个拖开即可（位置记忆） |
 
 ## 卸载
 
