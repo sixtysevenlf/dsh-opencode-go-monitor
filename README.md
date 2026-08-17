@@ -50,6 +50,26 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显�
 
 ## 安装
 
+### 文件分享安装（zip 包，最简单）
+
+拿到 `dsh-opencode-go-monitor-1.0.0.zip`（30 KB 单文件，可直接用微信/QQ/U 盘分享）后：
+
+1. **解压**得到 `dsh-opencode-go-monitor/` 文件夹（内含 `package.json`、`lib/`、`README.md`）
+2. 把整个文件夹**复制到** `$DSH_HOME/profiles/node_modules/` 下（Windows 默认 `C:\Users\<你>\.dsh\profiles\node_modules\`）
+3. 编辑 `$DSH_HOME/profiles/web/cordis.patch.yml`（没有则新建，内容为 `[]`），追加：
+
+   ```yaml
+   # 省钱+余额监控悬浮窗
+   - insert:
+       - id: opencode-go-monitor
+         name: 'dsh-opencode-go-monitor'
+   ```
+
+4. 保存后**热加载**生效，浏览器硬刷新（Ctrl+Shift+R）即可看到悬浮窗
+5. 配置凭据：见下方「前置条件」与「获取 DEEPSEEK_PLATFORM_TOKEN」（登录过官网的浏览器一般会自动读取，零配置）
+
+> zip 包内不含任何密钥；需要升级时用新 zip 覆盖 `lib/` 与 `package.json` 再刷新即可（或删掉旧文件夹重新解压）。
+
 ### 从 GitHub 获取
 
 ```bash

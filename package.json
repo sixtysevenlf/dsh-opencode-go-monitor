@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "OpenCode Go 余额悬浮窗（web UI 插件）：月度/滚动/每周额度 + 用量，可拖动、可调整大小",
+  "description": "省钱+余额监控悬浮窗（DSH Web UI 插件）：DeepSeek 余额/官网用量/金额单位/低价分析/高价区每小时限额/断点截断/低耗压缩/语音提醒",
+  "files": [
+    "lib"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
