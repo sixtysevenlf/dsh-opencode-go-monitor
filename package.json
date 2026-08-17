@@ -5,7 +5,8 @@
   "type": "module",
   "description": "省钱+余额监控悬浮窗（DSH Web UI 插件）：DeepSeek 余额/官网用量/金额单位/低价分析/高价区每小时限额/断点截断/低耗压缩/语音提醒",
   "files": [
-    "lib"
+    "lib",
+    "cordis.patch.yml"
   ],
   "exports": {
     ".": "./lib/index.js",
@@ -13,6 +14,9 @@
     "./package.json": "./package.json"
   },
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "inject": [
         "@deepseek-ai/dsh-client-runtime",

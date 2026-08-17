@@ -1,0 +1,5 @@
+# dsh-opencode-go-monitor bundle 层：插入插件行（恢复 profile 装配用）。
+- insert:
+    - id: dsh-opencode-go-monitor
+      name: 'dsh-opencode-go-monitor'
+      config: {}
