@@ -86,7 +86,13 @@ clone 出来的 `dsh-opencode-go-monitor/` 就是插件文件夹（含 `package.
 
 ### 获取 DEEPSEEK_PLATFORM_TOKEN（查看自己官网用量/金额）
 
-DeepSeek 官网控制台的用量/金额端点需要登录会话 token（API key 认证不了）。**每个用户都要用自己的**：
+DeepSeek 官网控制台的用量/金额端点需要登录会话 token（API key 认证不了）。**每个用户都要用自己的**。
+
+**插件会先尝试自动读取**：启动后自动扫描本机 Chrome / Edge / 360 极速浏览器（含各 profile）的 Local Storage，找到 platform.deepseek.com 域下的 userToken 并**用官网实体验证**后直接使用——**只要你在这些浏览器里登录过官网，通常无需任何手动配置**（读到的 token 只在内存中使用，不落盘、不写凭据文件）。
+
+> ⚠ 自动读取是"尽力而为"：token 若被浏览器压缩进 LevelDB 的 snappy 块（旧数据），可能读不到。此时按下面手动配置一次即可（读不到时面板会有提示）。
+
+**手动配置（自动读取无效时）**：
 
 1. 用任意浏览器（Chrome / Edge / 360 极速「极速模式」）登录 **https://platform.deepseek.com**
 2. 打开开发者工具：**F12**（或右键 → 检查）
