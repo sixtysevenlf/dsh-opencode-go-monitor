@@ -1,12 +1,13 @@
 # 省钱+余额监控悬浮窗（dsh-opencode-go-monitor）
 
-DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显示 DeepSeek 与 **OpenCode Go** 的额度余额（标签切换带滑动+淡入动画）。
+DSH（DeepSeek Harness）Web UI 悬浮面板插件：**三标签页** 实时显示 DeepSeek、**阿里百炼** 与 **OpenCode Go** 的额度余额（标签切换带滑动+淡入动画）。
 
-- **双标签页**：DeepSeek 余额 / OpenCode Go 余额，点击切换，带方向滑动 + 淡入动画
+- **三标签页**：DeepSeek 余额 / 阿里百炼余额 / OpenCode Go 余额，点击切换，带方向滑动 + 淡入动画
 - OpenCode Go 页：**月度 / 滚动 / 每周** 三档额度：剩余 %（绿≥50% / 橙≥25% / 红<25%）+ 进度条 + 已用 % + 重置时间
-- DeepSeek 页：余额、预计剩余 tokens（按 ¥4/百万估算）、当前模型、**官网平台用量**（当月 token 总量 / 花费金额 / API 请求次数 / 日均）
+- DeepSeek 页：余额、预计剩余 tokens（按**实际日均单价自动估算**，官网平台数据可用时用 日均花费 ÷ 日均 token，否则回退 0.12 元/百万）、当前模型、**官网平台用量**（当月 token 总量 / 花费金额 / API 请求次数 / 日均）
+- 阿里百炼页：阿里云账号余额（BSS `QueryAccountBalance`，需 `ALIBABA_ACCESS_KEY_ID` / `ALIBABA_ACCESS_KEY_SECRET`）
 - 可**拖动**（位置记忆）、右下角**调整大小**（尺寸记忆）
-- 轮询：DeepSeek 每 30s、OpenCode Go 每 60s、官网用量每 30s
+- 轮询：DeepSeek 每 30s、阿里百炼每 60s、OpenCode Go 每 60s、官网用量每 30s
 
 ## 省钱功能
 
@@ -46,6 +47,7 @@ DSH（DeepSeek Harness）Web UI 悬浮面板插件：**双标签页** 实时显�
 | DeepSeek Harness（web 或桌面端） | 插件运行在 DSH 内 |
 | DeepSeek API key | DSH **设置 → 凭据** 添加 `DEEPSEEK_API_KEY`（DeepSeek 余额标签页用） |
 | OpenCode Go 订阅 + API key | DSH **设置 → 凭据** 添加 `OPENCODE_GO_API_KEY`（在 [opencode.ai/auth](https://opencode.ai/auth) 获取） |
+| 阿里云 AccessKey | DSH **设置 → 凭据** 添加 `ALIBABA_ACCESS_KEY_ID` 和 `ALIBABA_ACCESS_KEY_SECRET`（阿里百炼余额标签页用；需有 `bss:QueryAccountBalance` 权限） |
 | **DeepSeek 官网登录会话 token** | DSH **设置 → 凭据** 添加 `DEEPSEEK_PLATFORM_TOKEN`（**查看自己官网用量/金额/小时粒度的必需项**，获取方法见下） |
 
 ## 安装
